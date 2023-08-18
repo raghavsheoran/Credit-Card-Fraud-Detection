@@ -1,52 +1,60 @@
-import numpy as np
+
 import pandas as pd
-import csv
 import sys
 import os
+import csv
+import numpy as np
+# uptill now i have imported everything need for my project and is graphcial related, These are really important for almost every ml projhect
 
 from sys import platform as sys_pf
 if sys_pf == 'darwin':
     import matplotlib
     matplotlib.use("TkAgg")
     import matplotlib.pyplot as plt
+# uptill now i have imported everything need for my project and is graphcial related,
+
+
+from sklearn.metrics import precision_recall_fscore_support as score
+
+from sklearn.decomposition import PCA
+
+from sklearn.ensemble import BaggingClassifier
+from sklearn.model_selection import train_test_split
 
 from sklearn import preprocessing
-from sklearn.decomposition import PCA
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import precision_recall_fscore_support as score
+from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
+import warnings
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
-from sklearn.svm import SVC
-from sklearn.ensemble import BaggingClassifier
-import warnings
 import pickle
+# uptill now i have imported everything need for my project
 
-max_iters = 10
-n_estimators = 10
+iteration_possible = 10 # the max num of iteration
+my estimation = 10 # used for estimations
 
 def logreg(x,y,filename):
 
-   # Model output file name
+   # Thats the output for my model name
    file = (os.path.splitext(filename))[0]
    fname = './models/lr_' + file +'/'
 
-   # File for writing precision,recall, f-measure scores for fraud transactions
+   # different mesaures to find accuracy of my model
    f = open('./prf/lr_'+ file + '_prf' +'.txt' ,'w')
    f.write('precision,recall,f-score \n')
 
-   # Stratified sampling based on Y
+   # Here i will calculate sampling, and these will be based on y
    X_train, X_test, y_train, y_test = train_test_split(x, y,stratify=y , test_size=0.30, random_state=42)
 
-   # Create 15% validation set and 15% test set split
+   # Here i will split my data, i think 15 percent for validation would be good and 15 percent for test split
    X_val, X_test, y_val, y_test = train_test_split(X_test, y_test,stratify=y_test , test_size=0.50, random_state=42)
    
-   #Iterations
+   # here  i will start the loop for iteration
    it = 0
    
-   # Run training algorithm for multiple class weights
-   while it < max_iters:
+   # Here i will run algo in acc with their weihts
+   while it < iteration_possible:
        cw = {}
        cw[0] = 1
        cw[1] = 2 ** it
@@ -61,7 +69,7 @@ def logreg(x,y,filename):
        name = fname + str(cw[1]) + '.sav'
        pickle.dump(lr, open(name, 'wb'))
 
-       # Predict on validation data
+       # Lets now validate the data
        y_val_pred = lr.predict(X_val)
        print('Performance on validation data - Confusion matrix')
        print(confusion_matrix(y_val,y_val_pred))
@@ -73,11 +81,11 @@ def logreg(x,y,filename):
        print("F-score" , fscore)
        print("Support" , support)
 
-       p1 = precision[1]
-       r1 = recall[1]
-       f1 = fscore[1]
+       my_precision = precision[1]
+       my_recall = recall[1]
+       my_f1 = fscore[1]
 
-       f.write(str(p1) +','+ str(r1) + ',' + str(f1) + '\n') 
+       f.write(str(my_precision) +','+ str(my_recall) + ',' + str(my_f1) + '\n') 
        it += 1
 
    f.close()
@@ -88,12 +96,12 @@ def run():
    	names = ['Amount','Source-OB','Source-NB','Dest-OB','Dest-NB','target'])
    
    results = list(map(int, df['target'])) 
-   print('Number of fraudulent transactions ' , sum(results))
+   print('No. of fraud transactions found ' , sum(results))
 
    features = ['Amount', 'Source-OB', 'Source-NB', 'Dest-OB' , 'Dest-NB']
    targets = ['target']
 
-   # Separating out the features and target variables
+   # Lets not separate various type of data and variables
    x = df.loc[:, features].values
    y = df.loc[:, targets].values
 
