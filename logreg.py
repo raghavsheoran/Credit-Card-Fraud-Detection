@@ -20,6 +20,8 @@ from sklearn.decomposition import PCA
 
 from sklearn.ensemble import BaggingClassifier
 from sklearn.model_selection import train_test_split
+      
+       print(confusion_matrix(y_val,y_val_pred))
 
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
@@ -35,7 +37,9 @@ iteration_possible = 10 # the max num of iteration
 my estimation = 10 # used for estimations
 
 def logreg(x,y,filename):
-
+for x in x_val:
+  print(x)
+    print(y_val)
    # Thats the output for my model name
    file = (os.path.splitext(filename))[0]
    fname = './models/lr_' + file +'/'
@@ -43,6 +47,9 @@ def logreg(x,y,filename):
    # different mesaures to find accuracy of my model
    f = open('./prf/lr_'+ file + '_prf' +'.txt' ,'w')
    f.write('precision,recall,f-score \n')
+for x in x_val:
+  print(x)
+    print(y_val)
 
    # Here i will calculate sampling, and these will be based on y
    X_train, X_test, y_train, y_test = train_test_split(x, y,stratify=y , test_size=0.30, random_state=42)
@@ -52,6 +59,9 @@ def logreg(x,y,filename):
    
    # here  i will start the loop for iteration
    it = 0
+for x in x_val:
+  print(x)
+    print(y_val)
    
    # Here i will run algo in acc with their weihts
    while it < iteration_possible:
@@ -64,6 +74,9 @@ def logreg(x,y,filename):
        lr = LogisticRegression(class_weight = cw)
        print('Class weights ', cw)
        lr.fit(X_train,y_train)
+       for x in x_val:
+  print(x)
+    print(y_val)
 
        # Save trained model to disk
        name = fname + str(cw[1]) + '.sav'
@@ -84,7 +97,9 @@ def logreg(x,y,filename):
        my_precision = precision[1]
        my_recall = recall[1]
        my_f1 = fscore[1]
-
+for x in x_val:
+  print(x)
+    print(y_val)
        f.write(str(my_precision) +','+ str(my_recall) + ',' + str(my_f1) + '\n') 
        it += 1
 
@@ -97,6 +112,9 @@ def run():
    
    results = list(map(int, df['target'])) 
    print('No. of fraud transactions found ' , sum(results))
+    for x in x_val:
+  print(x)
+    print(y_val)
 
    features = ['Amount', 'Source-OB', 'Source-NB', 'Dest-OB' , 'Dest-NB']
    targets = ['target']
